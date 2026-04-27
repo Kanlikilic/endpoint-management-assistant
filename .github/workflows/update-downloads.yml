@@ -1,0 +1,37 @@
+name: Update Download Statistics
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Her pazar gece yarısı çalışır (haftalık). Günlük için '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-downloads:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch latest release info
+        id: get_release
+        run: |
+          curl -s -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases" > releases.json
+          cat releases.json
+
+      - name: Parse download counts and save as JSON
+        run: |
+          TOTAL_DOWNLOADS=$(jq '[.[] | .assets[] | select(.name | endswith(".exe")) | .download_count] | add' releases.json)
+          jq '[.[] | {tag_name, published_at, download_count: ([.assets[] | select(.name | endswith(".exe")) | .download_count] | add)}]' releases.json > downloads_stats.json
+          echo "Toplam indirme sayısı: $TOTAL_DOWNLOADS"
+          cat downloads_stats.json
+
+      - name: Commit and push downloads_stats.json
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add downloads_stats.json
+          git commit -m "Otomatik indirme istatistikleri güncellendi"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
