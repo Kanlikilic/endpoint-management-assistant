@@ -18,7 +18,83 @@ async function getLatestRelease() {
     }
   } catch (e) {
     document.getElementById('downloadCount').textContent = "İndirme verileri alınamadı.";
-  }
+  }<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Endpoint Management Assistant (EMA)</title>
+  <meta name="description" content="With Endpoint Management Assistant (EMA), manage, download, and report on your endpoints easily. Modern, secure, and fast!">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/microsoftdefender.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo-title">
+      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/microsoftdefender.svg" alt="EMA Logo" class="logo">
+      <div>
+        <h1>Endpoint Management Assistant</h1>
+        <h2>EMA</h2>
+      </div>
+    </div>
+    <p class="subtitle">Manage your endpoints in a modern, fast, and secure way.</p>
+  </header>
+  <main>
+    <section class="hero">
+      <a id="downloadLink" class="download-btn" href="#" target="_blank" rel="noopener">Download EXE Now</a>
+      <div id="downloadCount" class="downloads">Loading download count...</div>
+      <div class="slogan">Free &middot; Open Source &middot; Continuously Updated</div>
+    </section>
+
+    <section class="features">
+      <h2>Main Benefits</h2>
+      <div class="features-list">
+        <div class="feature-card">
+          <span class="icon">⚡</span>
+          <h3>Fast & Easy to Use</h3>
+          <p>Save time with a user-friendly interface.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🔒</span>
+          <h3>Secure</h3>
+          <p>Data privacy is our priority in all your workflows.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon">📊</span>
+          <h3>Advanced Reporting</h3>
+          <p>Batch endpoint analysis and detailed reporting.</p>
+        </div>
+        <div class="feature-card">
+          <span class="icon">🔄</span>
+          <h3>Auto Updates</h3>
+          <p>Always the latest version with automatic updates.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="screenshot-section">
+      <h2>App Screenshot</h2>
+      <img src="https://via.placeholder.com/700x350?text=Add+your+App+Screenshot+Here" class="screenshot" alt="EMA App Screenshot">
+      <!-- You can replace the above image with your own app screenshot -->
+    </section>
+
+    <section class="contact-social">
+      <h2>Contact & Social</h2>
+      <div class="social-links">
+        <a href="mailto:kanlikilic@example.com" class="social" title="E-mail"><span>📧</span></a>
+        <a href="https://github.com/Kanlikilic/endpoint-management-assistant" class="social" target="_blank" rel="noopener" title="GitHub"><span>🌐</span></a>
+        <!-- Add LinkedIn, X, Discord, Telegram etc. if you like -->
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div>© 2026 Kanlikilic – EMA • <a href="https://github.com/Kanlikilic/endpoint-management-assistant" target="_blank">GitHub Source</a></div>
+    <div class="madeby">Made with ❤️ using GitHub Pages</div>
+  </footer>
+</body>
+</html>
 }
 
 document.addEventListener('DOMContentLoaded', getLatestRelease);
