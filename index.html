@@ -2,123 +2,852 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Endpoint Management Assistant (EMA)</title>
-  <meta name="description" content="Manage your endpoints easily, securely, and efficiently with EMA. Download, update, and report with one tool.">
+  <title>EMA – Endpoint Management Assistant</title>
+  <meta name="description" content="Manage your endpoints with speed, security, and confidence. EMA is the modern IT tool you've been waiting for.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/microsoftdefender.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;400&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <script defer src="script.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #080c18;
+      --bg2:      #0d1426;
+      --accent:   #2d7fff;
+      --accent2:  #00c8ff;
+      --glow:     rgba(45,127,255,0.35);
+      --glow2:    rgba(0,200,255,0.18);
+      --glass:    rgba(255,255,255,0.04);
+      --glass-b:  rgba(255,255,255,0.09);
+      --text:     #e8f0ff;
+      --muted:    #6b82a8;
+      --card-bg:  rgba(13,20,38,0.85);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ───── NOISE OVERLAY ───── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ───── AMBIENT ORBS ───── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+      animation: pulse 8s ease-in-out infinite;
+    }
+    .orb-1 { width: 520px; height: 520px; background: radial-gradient(circle, rgba(45,127,255,0.18) 0%, transparent 70%); top: -120px; left: -120px; animation-delay: 0s; }
+    .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,200,255,0.13) 0%, transparent 70%); bottom: 10%; right: -80px; animation-delay: 3s; }
+    .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(45,127,255,0.10) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: 5s; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+
+    /* ───── HEADER / NAV ───── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.1rem 3rem;
+      background: rgba(8,12,24,0.75);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    .nav-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+    }
+    .nav-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .nav-name span { color: var(--accent2); }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff !important;
+      padding: 0.5rem 1.2rem;
+      border-radius: 2em;
+      font-weight: 500 !important;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ───── HERO ───── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7rem 2rem 4rem;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(45,127,255,0.12);
+      border: 1px solid rgba(45,127,255,0.3);
+      border-radius: 2em;
+      padding: 0.35em 1em;
+      font-size: 0.82rem;
+      color: var(--accent2);
+      margin-bottom: 2.2rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 500;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 8px var(--accent2);
+      animation: blink 1.4s ease infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero-logo-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2.2rem;
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .hero-logo {
+      width: 140px;
+      height: 140px;
+      border-radius: 28px;
+      box-shadow: 0 0 60px rgba(45,127,255,0.35), 0 0 120px rgba(0,200,255,0.15);
+      position: relative;
+      z-index: 1;
+    }
+    .hero-logo-glow {
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle, rgba(45,127,255,0.25) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: 0;
+      animation: pulse 3s ease infinite;
+    }
+
+    .hero-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.6rem, 6vw, 4.5rem);
+      line-height: 1.1;
+      margin-bottom: 0.4em;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .hero-title em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.7;
+      font-weight: 300;
+      animation: fadeUp 0.9s 0.3s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 1s 0.4s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #fff;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 2em;
+      text-decoration: none;
+      box-shadow: 0 0 30px rgba(45,127,255,0.4), 0 4px 20px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 50px rgba(45,127,255,0.6), 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--glass);
+      color: var(--text);
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 2em;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .hero-meta {
+      margin-top: 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      animation: fadeUp 1.1s 0.5s ease both;
+    }
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .meta-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--accent2);
+    }
+
+    #downloadCount {
+      color: var(--accent2);
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      opacity: 0.85;
+      animation: fadeUp 1.1s 0.55s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ───── DIVIDER ───── */
+    .divider {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(45,127,255,0.4), transparent);
+      margin: 0;
+    }
+
+    /* ───── STATS BAR ───── */
+    .stats-bar {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      background: rgba(255,255,255,0.025);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1.5rem 2rem;
+    }
+    .stat-item {
+      flex: 1;
+      max-width: 200px;
+      text-align: center;
+      padding: 0 1.5rem;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-value {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { color: var(--muted); font-size: 0.8rem; margin-top: 0.15rem; }
+
+    /* ───── SECTION SHARED ───── */
+    section { position: relative; z-index: 1; }
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 5rem 2rem;
+    }
+    .section-tag {
+      display: inline-block;
+      background: rgba(45,127,255,0.12);
+      border: 1px solid rgba(45,127,255,0.25);
+      color: var(--accent2);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-weight: 600;
+      padding: 0.3em 0.9em;
+      border-radius: 2em;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+    }
+    .section-title span {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 500px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    /* ───── FEATURES ───── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      padding: 2rem 1.6rem;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .feature-card:hover {
+      border-color: rgba(45,127,255,0.35);
+      transform: translateY(-5px);
+      box-shadow: 0 20px 60px rgba(45,127,255,0.12);
+    }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(45,127,255,0.15), rgba(0,200,255,0.1));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+      border: 1px solid rgba(45,127,255,0.2);
+      color: var(--accent2);
+    }
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+    .feature-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+
+    /* ───── SCREENSHOT ───── */
+    .screenshot-section .section-inner { text-align: center; }
+    .screenshot-wrap {
+      position: relative;
+      display: inline-block;
+      margin: 0 auto;
+    }
+    .screenshot-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), transparent);
+      z-index: 0;
+      opacity: 0.6;
+    }
+    .screenshot-img {
+      position: relative;
+      z-index: 1;
+      max-width: 100%;
+      border-radius: 16px;
+      display: block;
+      background: #0d1426;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .screenshot-placeholder {
+      width: 100%;
+      max-width: 760px;
+      height: 380px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0d1426 0%, #111d38 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      position: relative;
+      z-index: 1;
+      border: 1px dashed rgba(45,127,255,0.25);
+    }
+    .screenshot-placeholder svg { opacity: 0.3; }
+
+    /* ───── HOW IT WORKS ───── */
+    .steps-row {
+      display: flex;
+      gap: 0;
+      position: relative;
+    }
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: 10%;
+      right: 10%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0.25;
+    }
+    .step {
+      flex: 1;
+      text-align: center;
+      padding: 0 1.5rem;
+      position: relative;
+    }
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 0 30px rgba(45,127,255,0.4);
+      position: relative;
+      z-index: 1;
+    }
+    .step h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: #fff;
+    }
+    .step p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    /* ───── CONTACT / SOCIAL ───── */
+    .contact-section .section-inner { text-align: center; }
+    .social-row {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+      padding: 0.75rem 1.5rem;
+      border-radius: 2em;
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      backdrop-filter: blur(10px);
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .social-btn:hover {
+      background: linear-gradient(135deg, rgba(45,127,255,0.2), rgba(0,200,255,0.15));
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(45,127,255,0.2);
+    }
+
+    /* ───── FOOTER ───── */
+    footer {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 2rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    footer a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .footer-logo {
+      width: 24px; height: 24px;
+      border-radius: 6px;
+    }
+
+    /* ───── RESPONSIVE ───── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.2rem; }
+      .nav-links { display: none; }
+      .steps-row { flex-direction: column; gap: 2rem; }
+      .steps-row::before { display: none; }
+      .stats-bar { flex-wrap: wrap; }
+      .stat-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.06); padding: 0.8rem 1rem; }
+      .footer-inner { flex-direction: column; text-align: center; }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="logo-title">
-      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/microsoftdefender.svg" alt="EMA Logo" class="logo">
-      <div>
-        <h1>Endpoint Management Assistant</h1>
-        <h2>Manage endpoints with speed and confidence.</h2>
-      </div>
+
+  <!-- AMBIENT ORBS -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-brand">
+      <img src="Designer.png" alt="EMA Logo" class="nav-logo">
+      <span class="nav-name">EM<span>A</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="https://github.com/Kanlikilic/endpoint-management-assistant" target="_blank" class="nav-cta">GitHub</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">Open Source · Free · v1.0</div>
+
+    <div class="hero-logo-wrap">
+      <div class="hero-logo-glow"></div>
+      <img src="Designer.png" alt="EMA Logo" class="hero-logo">
     </div>
-  </header>
-  <main>
-    <section class="hero">
-      <div class="hero-content">
-        <h2 class="tagline">Modern endpoint management for IT professionals</h2>
-        <p class="subtag">Automate. Monitor. Report. All in one simple app.</p>
-        <a id="downloadLink" class="download-btn" href="#" target="_blank" rel="noopener">Download EXE</a>
-        <div id="downloadCount" class="downloads">Loading downloads...</div>
-        <div class="slogan">Free • Open Source • Continuous Updates</div>
-      </div>
-      <div class="screenshot-mockup">
-        <img src="https://via.placeholder.com/650x300?text=App+Screenshot+Placeholder" alt="App Screenshot">
-      </div>
-    </section>
-    <section class="features">
-      <h2>Key Features</h2>
-      <div class="features-list">
+
+    <h1 class="hero-title">Endpoint Management<br><em>Reimagined.</em></h1>
+    <p class="hero-sub">EMA gives IT professionals a modern, unified interface to automate, monitor, and report across all endpoints — without the complexity.</p>
+
+    <div class="hero-actions">
+      <a id="downloadLink" href="#" class="btn-primary" target="_blank" rel="noopener">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download EXE
+      </a>
+      <a href="https://github.com/Kanlikilic/endpoint-management-assistant" class="btn-secondary" target="_blank" rel="noopener">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.02 1.53 1.02.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.84c.85.004 1.71.114 2.51.334 1.9-1.29 2.74-1.02 2.74-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.94.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48A10.001 10.001 0 0 0 12 2z"/></svg>
+        View on GitHub
+      </a>
+    </div>
+
+    <div id="downloadCount"></div>
+
+    <div class="hero-meta">
+      <div class="meta-item"><div class="meta-dot"></div> Free & Open Source</div>
+      <div class="meta-item"><div class="meta-dot"></div> Auto Updates</div>
+      <div class="meta-item"><div class="meta-dot"></div> Windows EXE</div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-value">100%</div>
+      <div class="stat-label">Free Forever</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">0</div>
+      <div class="stat-label">Telemetry / Tracking</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">1-Click</div>
+      <div class="stat-label">Deployment</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value">AES</div>
+      <div class="stat-label">Encrypted Comms</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="section-inner">
+      <div class="section-tag">Features</div>
+      <h2 class="section-title">Everything you need to<br><span>manage endpoints.</span></h2>
+      <p class="section-desc">Designed for IT professionals who don't want to juggle 10 different tools to do one job.</p>
+
+      <div class="features-grid">
         <div class="feature-card">
-          <!-- Lightning SVG -->
-          <div class="svg-icon">
-            <svg width="32" height="32" stroke="currentColor" fill="none" stroke-width="2" 
-                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
           <h3>Fast Deployment</h3>
-          <p>Easy to install and update across all endpoints.</p>
+          <p>Install, configure, and push to all endpoints in seconds. No complex setup required.</p>
         </div>
         <div class="feature-card">
-          <!-- Lock SVG -->
-          <div class="svg-icon">
-            <svg width="32" height="32" stroke="currentColor" fill="none" stroke-width="2" 
-                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <rect x="3" y="11" width="18" height="11" rx="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
           <h3>Enterprise Security</h3>
-          <p>All communications are encrypted. Your data stays yours.</p>
+          <p>All communications are encrypted end-to-end. Your data never leaves your environment.</p>
         </div>
         <div class="feature-card">
-          <!-- Chart SVG -->
-          <div class="svg-icon">
-            <svg width="32" height="32" stroke="currentColor" fill="none" stroke-width="2" 
-                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <path d="M3 3v18h18"></path>
-              <rect x="7" y="13" width="3" height="5"></rect>
-              <rect x="12" y="9" width="3" height="9"></rect>
-              <rect x="17" y="5" width="3" height="13"></rect>
-            </svg>
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="13" width="3" height="5"/><rect x="12" y="9" width="3" height="9"/><rect x="17" y="5" width="3" height="13"/></svg>
           </div>
           <h3>Advanced Reporting</h3>
-          <p>Instantly generate actionable endpoint reports.</p>
+          <p>Generate detailed endpoint reports on demand. Batch analysis with one click.</p>
         </div>
         <div class="feature-card">
-          <!-- Refresh SVG -->
-          <div class="svg-icon">
-            <svg width="32" height="32" stroke="currentColor" fill="none" stroke-width="2" 
-                 stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <polyline points="23 4 23 10 17 10"></polyline>
-              <polyline points="1 20 1 14 7 14"></polyline>
-              <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10m-1.51 5a9 9 0 0 1-14.13 3.36L1 14"></path>
-            </svg>
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10m-1.51 5a9 9 0 0 1-14.13 3.36L1 14"/></svg>
           </div>
           <h3>Auto Updates</h3>
-          <p>Stay up to date, always the latest version available.</p>
+          <p>EMA keeps itself up to date automatically. Always running the latest stable version.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>Multi-Endpoint View</h3>
+          <p>Monitor and control all your endpoints from a single, clean dashboard interface.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+          </div>
+          <h3>Zero Telemetry</h3>
+          <p>No tracking, no analytics, no phone-home. Completely private by design.</p>
         </div>
       </div>
-    </section>
-    <section class="contact-social">
-      <h2>Contact & Social</h2>
-      <div class="social-links">
-        <a href="mailto:kanlikilic@example.com" class="social" title="E-mail">
-          <svg width="28" height="28" stroke="currentColor" fill="none" stroke-width="2" 
-               stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-            <polyline points="22,6 12,13 2,6"></polyline>
-          </svg>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HOW IT WORKS -->
+  <section id="how">
+    <div class="section-inner">
+      <div class="section-tag">How It Works</div>
+      <h2 class="section-title">Up and running in<br><span>three steps.</span></h2>
+      <p class="section-desc">No complicated onboarding. No docs to read. Just download and go.</p>
+
+      <div class="steps-row">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h3>Download</h3>
+          <p>Grab the latest EXE directly from GitHub Releases. Single file, no installer required.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h3>Connect</h3>
+          <p>Add your endpoints in seconds. EMA auto-discovers devices on your network.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h3>Manage</h3>
+          <p>Monitor, update, and generate reports across all endpoints from one place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SCREENSHOT -->
+  <section class="screenshot-section">
+    <div class="section-inner">
+      <div class="section-tag">App Preview</div>
+      <h2 class="section-title">Clean. <span>Powerful.</span> Intuitive.</h2>
+      <p class="section-desc" style="margin:0 auto 2.5rem; text-align:center;">Replace this with your actual app screenshot.</p>
+      <div class="screenshot-wrap">
+        <div class="screenshot-placeholder">
+          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Add your app screenshot here
+          <small style="font-size:0.78rem; opacity:0.6;">Replace .screenshot-placeholder with an &lt;img&gt; tag</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section class="contact-social" id="contact">
+    <div class="section-inner">
+      <div class="section-tag">Contact</div>
+      <h2 class="section-title">Get in <span>touch.</span></h2>
+      <p class="section-desc" style="margin: 0 auto;">Have questions, feedback, or want to contribute? Reach out on GitHub or by email.</p>
+      <div class="social-row">
+        <a href="mailto:kanlikilic@example.com" class="social-btn">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="22,6 12,13 2,6"/></svg>
+          Email
         </a>
-        <a href="https://github.com/Kanlikilic/endpoint-management-assistant" class="social" target="_blank" rel="noopener" title="GitHub">
-          <svg width="28" height="28" fill="currentColor" stroke="none" viewBox="0 0 24 24">
-            <path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48 
-            0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34
-            -.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6
-            1 .07 1.53 1.02 1.53 1.02 .89 1.53 2.34 1.09 2.91.83
-            .09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95
-            0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0
-            .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.84c.85.004 1.71.114 2.51.334
-            1.9-1.29 2.74-1.02 2.74-1.02 .55 1.38.2 2.4.1 2.65
-            .64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.94
-            .36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48
-            A10.001 10.001 0 0 0 12 2z"></path>
-          </svg>
+        <a href="https://github.com/Kanlikilic/endpoint-management-assistant" class="social-btn" target="_blank" rel="noopener">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.02 1.53 1.02.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.95 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02A9.56 9.56 0 0 1 12 6.84c.85.004 1.71.114 2.51.334 1.9-1.29 2.74-1.02 2.74-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.85-2.34 4.7-4.57 4.94.36.31.68.92.68 1.85 0 1.34-.01 2.42-.01 2.75 0 .27.18.58.69.48A10.001 10.001 0 0 0 12 2z"/></svg>
+          GitHub
         </a>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
   <footer>
-    <div>© 2026 Kanlikilic – EMA • <a href="https://github.com/Kanlikilic/endpoint-management-assistant" target="_blank">GitHub Source</a></div>
-    <div class="madeby">Built with GitHub Pages</div>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="Designer.png" alt="EMA" class="footer-logo">
+        <span>© 2026 Kanlikilic – EMA</span>
+      </div>
+      <div>
+        <a href="https://github.com/Kanlikilic/endpoint-management-assistant" target="_blank">GitHub Source</a>
+        &nbsp;·&nbsp;
+        Built with ❤️ using GitHub Pages
+      </div>
+    </div>
   </footer>
+
+  <script>
+    const repoOwner = "Kanlikilic";
+    const repoName  = "endpoint-management-assistant";
+
+    async function getLatestRelease() {
+      try {
+        const res  = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/releases/latest`);
+        const data = await res.json();
+        const exe  = data.assets?.find(a => a.name.endsWith('.exe'));
+        if (exe) {
+          document.getElementById('downloadLink').href        = exe.browser_download_url;
+          document.getElementById('downloadCount').textContent = `⬇ ${exe.download_count.toLocaleString()} downloads`;
+        } else {
+          document.getElementById('downloadLink').textContent = "No EXE release yet";
+          document.getElementById('downloadLink').href        = `https://github.com/${repoOwner}/${repoName}/releases`;
+        }
+      } catch {
+        document.getElementById('downloadCount').textContent = "";
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', getLatestRelease);
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.feature-card, .step, .stat-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+  </script>
 </body>
 </html>
