@@ -1,0 +1,19 @@
+# Windows / Mac dosyaları
+.DS_Store
+Thumbs.db
+
+# Loglar
+*.log
+
+# EXE ve derlenmiş binary dosyalar
+*.exe
+
+# IDE ve editör ayarları
+.vscode/
+.idea/
+*.sln
+*.user
+*.swp
+
+# Npm/Node
+node_modules/
