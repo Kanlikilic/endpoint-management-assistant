@@ -127,6 +127,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 ## Author
 
 Built by [Mert Efe Kanlıkılıç](https://mertefekanlikilic.com)
-Community: [Workplace Ninjas Turkey](https://workplaceninjas.com)
 
 *EMA is an independent community project and is not affiliated with or endorsed by Microsoft.*
