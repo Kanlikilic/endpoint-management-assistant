@@ -530,20 +530,21 @@
     }
 
     async function getLatestRelease() {
-      try {
-        const res  = await fetch('https://api.github.com/repos/Kanlikilic/endpoint-management-assistant/releases/latest');
-        const data = await res.json();
-        const exe  = data.assets?.find(a => a.name.endsWith('.exe'));
-        if (exe) {
-          ['downloadLink','navDownload'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.href = exe.browser_download_url;
-          });
-          document.getElementById('downloadCount').textContent =
-            exe.download_count.toLocaleString() + ' downloads  ·  ' + data.tag_name;
-        }
-      } catch { }
-    }
+  try {
+    const res  = await fetch('https://api.github.com/repos/Kanlikilic/endpoint-management-assistant/releases/latest');
+    const data = await res.json();
+    const releaseUrl = data.html_url;
+    const totalDownloads = data.assets?.reduce((sum, a) => sum + (a.download_count || 0), 0) || 0;
+
+    ['downloadLink','navDownload'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.href = releaseUrl;
+    });
+
+    document.getElementById('downloadCount').textContent =
+      totalDownloads.toLocaleString() + ' downloads  ·  ' + data.tag_name;
+  } catch { }
+}
     document.addEventListener('DOMContentLoaded', getLatestRelease);
 
     const io = new IntersectionObserver((entries) => {
