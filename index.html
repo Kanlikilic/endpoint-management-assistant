@@ -105,7 +105,26 @@
     .htag { display: flex; align-items: center; gap: 6px; font-size: 0.8rem; color: var(--muted); font-weight: 500; }
     .htag svg { color: var(--blue); flex-shrink: 0; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-    
+    .video-responsive {
+  position: relative;
+  width: 100%;
+  max-width: 900px;   /* videonun maksimum genişliği */
+  margin: 0 auto;     /* ortalar */
+  padding-bottom: 56.25%; /* 16:9 ratio */
+  height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+}
+
+.video-responsive iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
     /* TERMINAL */
     .terminal-section { position: relative; z-index: 1; padding: 0 2rem 5rem; }
     .terminal-wrap { max-width: 860px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
