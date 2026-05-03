@@ -2,7 +2,7 @@ name: Update Download Statistics
 
 on:
   schedule:
-    - cron: '0 0 * * 0'
+    - cron: '0 0 * * 0'   # Her pazar gece yarısı
   workflow_dispatch:
 
 permissions:
@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch latest release info
         id: get_release
@@ -24,8 +26,8 @@ jobs:
 
       - name: Parse download counts and save as JSON
         run: |
-          TOTAL_DOWNLOADS=$(jq '[.[] | .assets[] | select(.name | endswith(".exe")) | .download_count] | add' releases.json)
-          jq '[.[] | {tag_name, published_at, download_count: ([.assets[] | select(.name | endswith(".exe")) | .download_count] | add)}]' releases.json > downloads_stats.json
+          TOTAL_DOWNLOADS=$(jq '[.[] | .assets[] | select(.name | endswith(".exe") or endswith(".zip")) | .download_count] | add' releases.json)
+          jq '[.[] | {tag_name, published_at, download_count: ([.assets[] | select(.name | endswith(".exe") or endswith(".zip")) | .download_count] | add)}]' releases.json > downloads_stats.json
           echo "Toplam indirme sayısı: $TOTAL_DOWNLOADS"
           cat downloads_stats.json
 
@@ -34,7 +36,7 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add downloads_stats.json
-          git commit -m "Otomatik indirme istatistikleri güncellendi"
+          git commit -m "Otomatik indirme istatistikleri güncellendi" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
